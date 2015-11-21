@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>IMedlib | 登陆</title>
+
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="bower_components/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="bower_components/sweetalert/dist/sweetalert.css">
+</head>
+
+<body class="gray-bg">
+
+    <div class="middle-box text-center loginscreen animated fadeInDown">
+        <div>
+            <div>
+
+                <h1 class="logo-name">IMedlib</h1>
+
+            </div>
+            
+            <form class="m-t" role="form" id="form">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="手机号码" name="mobile" id="mobile">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="验证码" id="yzm">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary block full-width" id="code">点击获取验证码</button>
+                </div>
+                <button type="submit" class="btn btn-primary block full-width m-b">登录</button>
+
+                <p class="text-muted text-center"><small>没有账号?注册一个</small></p>
+                <a class="btn btn-sm btn-white btn-block" href="register.html">注册</a>
+            </form>
+            <p class="m-t"> <small>IMedlib &copy; 2015</small> </p>
+        </div>
+    </div>
+
+    <!-- Mainly scripts -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="js/app.js"></script>
+    <script type="text/javascript" src="js/app.jquery.js"></script>
+    <script type="text/javascript" src="js/app.user.js"></script>
+    <script type="text/javascript" src="bower_components/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jQueryForm/jQueryForm.js"></script>
+    <script type="text/javascript" src="bower_components/sweetalert/dist/sweetalert.min.js"></script>
+    <script type="text/javascript" src="js/app-sweetalert.js"></script>
+
+    <script type="text/javascript">
+        var wait=app.config.wait;
+        jQuery(document).ready(function($) {
+            jQuery.validator.addMethod("isMobile", function(value, element) {
+                var length = value.length;
+                return this.optional(element) || (length == 11 && /^(((13)|(15)|(17)|(18))+\d{9})$/.test(value));
+            }, "手机号码格式错误!");
+            $('#form').validate({
+                rules:{
+                    mobile:{
+                        required:true,
+                        isMobile:true
+                    }
+                },
+                messages:{
+                    mobile:{
+                        required:'必须填写手机号码'
+                    }
+                }
+            });
+            $('#code').on('click',function(){
+                if($('#form').validate().form()){
+                    setTime($(this));
+                    getVerificationCode($('#mobile').val());
+                }
+
+            });
+            $('#form').submit(function() {
+                if(!$(this).validate().form()){
+                    return false;
+                }
+                if($('#yzm').val()==''){
+                    app.message.error('验证码不能为空');
+                    return false;
+                }
+                app.user.login({
+                    data:{
+                        mobile:$('#mobile').val(),
+                        vcode:$('#yzm').val()
+                    },
+                    success:function(result){
+                        if(result.code==1)
+                        {
+                            app.message.error(result.msg);
+                        }else if(result.code==2){
+                            app.message.error('注册出错，请重新尝试！');
+                        }else{
+                            app.cookie.set('userid',result.uid,7);
+                            app.cookie.set('token',encodeURIComponent(result.token),7);
+                            window.location.href="user/profile.html";
+                        }
+                    }
+                });
+                
+                return false;
+            });
+            function getVerificationCode(mobile){
+                app.user.sendSms({
+                    data:{mobile:mobile},
+                    success:function(result){
+                        if(result.code==0&&result.vcode!=null){
+                            app.message.info(result.msg+result.vcode,'提示');
+                        }else{
+                            app.message.error(result.msg);
+                        }
+                    }
+                });
+            }
+            function setTime(object){
+               if(wait==0){
+                object.removeAttr('disabled');
+                object.text("点击获取验证码");
+                wait=app.config.wait;
+                }else{
+                    object.attr('disabled',true);
+                    object.text("重新发送(" + wait + ")");
+                    wait--;
+                    setTimeout(function() {
+                        setTime(object);
+                    }, 1000);
+                }
+            }
+        });
+    </script>
+</body>
+    
+</html>
