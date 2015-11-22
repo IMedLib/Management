@@ -1,0 +1,15 @@
+{
+  "name": "jqPagination",
+  "homepage": "https://github.com/beneverard/jqPagination",
+  "version": "1.2.4",
+  "_release": "1.2.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.2.4",
+    "commit": "2f5ad42cb331c5a7b21a4af1782712999cb7a3cb"
+  },
+  "_source": "git://github.com/beneverard/jqPagination.git",
+  "_target": "~1.2.4",
+  "_originalSource": "beneverard/jqPagination",
+  "_direct": true
+}

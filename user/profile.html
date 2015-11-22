@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>个人中心 | IMedlib</title>
+
+    <link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../bower_components/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../bower_components/sweetalert/dist/sweetalert.css">
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element">
+                    </div>
+                    <div class="logo-element">
+                        IMedlib
+                    </div>
+                </li>
+                <li class="active">
+                    <a href="#"><i class="fa fa-user"></i> <span class="nav-label">个人中心</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class="active">
+                            <a href="/user/profile">个人信息</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">资源中心</span> <span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="../resource/list.html">我的资源</a>
+                        </li>
+                         <li>
+                                <a href="#">云板书<span class="fa arrow"></span></a>
+                                <ul class="nav nav-third-level">
+                                     <li>
+                                         <a href="../resource/ybs/ybsupload.html">云板书上传</a>
+                                    </li>
+                                     <li>
+                                         <a href="../resource/ybs/list.html">我的云板书</a>
+                                     </li>
+                                </ul>
+                            </li>
+                       
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-book"></i> <span class="nav-label">课程课堂</span> <span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="../course/list.html">我的课程</a>
+                        </li>
+                        <li>
+                            <a href="../class/list.html">我的课堂</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+
+    <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                <!-- <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                    <form role="search" class="navbar-form-custom" method="post" action="#">
+                        <div class="form-group">
+                            <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                        </div>
+                    </form>
+                </div> -->
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <strong class="font-bold" id="username"></strong>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-sign-out"></i> 退出
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+        </div>
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>个人信息</h5>
+                        </div>
+                        <div>
+                            <div class="ibox-content no-padding border-left-right">
+                                <!-- <img src="../img/profile_big.jpg" alt="img" class="img-responsive"> -->
+                            </div> 
+                            <div class="ibox-content profile-content">
+                                <h4>昵称:<strong id="nickname"></strong></h4>
+                                <p id="groups"></p>
+                                <h5>关于我</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8"></div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="pull-right">
+                
+            </div>
+            <div>
+                <strong>Copyright</strong> IMedlib &copy; 2015
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<script src="../bower_components/slimscroll/jquery.slimscroll.min.js"></script>
+
+<script type="text/javascript" src="../js/app.js"></script>
+<script type="text/javascript" src="../js/app.user.js"></script>
+<!-- Custom and plugin javascript -->
+<script src="../js/inspinia.js"></script>
+<script src="../bower_components/PACE/pace.min.js"></script>
+<!--sweetalert-->
+<script type="text/javascript" src="../bower_components/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript" src="../js/app-sweetalert.js"></script>
+<script>
+    jQuery(document).ready(function($) {
+        init();
+        function init(){
+            getUserInfo();
+            // getUserGroups();
+        }
+        function getUserInfo(){
+            app.user.getUserInfo({
+                data:{uid:app.cookie.get('userid')},
+                success:function(data){
+                    if(data=="") return false;
+                    $('#nickname').text(data.nname);
+                    $('#username').text(data.uname);
+                }
+            });
+            
+        }
+        // function getUserGroups(){
+        //     var data=app.user.getUserGroupList(app.key,app.token);
+        //     if(data.code==0){
+        //         var groups=$('#groups')
+        //         $.each(data.list, function(index, val) {
+        //              groups.append(val.title+'|');
+        //         });
+        //     }
+        // }
+    });
+</script>
+</body>
+
+</html>

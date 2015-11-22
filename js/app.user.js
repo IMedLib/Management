@@ -12,18 +12,18 @@ var app=app||{};
 		userOptions.url=app.config.userdomain+'Captcha/Add/';
 		userOptions.type='GET';
 
-		app.ajax(userOptions);
+		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
 		
 	};
 	app.user.register=function(userOptions){
 		userOptions=userOptions||{};
 		userOptions.url=app.config.userdomain+'User/Add/Reg/';
-		app.ajax(userOptions);
+		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
 	};
 	app.user.login=function(userOptions){
 		userOptions=userOptions||{};
 		userOptions.url=app.config.userdomain+'User/Put/Login/';
-		app.ajax(userOptions);
+		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
 	}
 	
 	//手机号是否已注册
@@ -33,8 +33,7 @@ var app=app||{};
 		userOptions.url=app.config.userdomain+'user/get';
 		userOptions.type='GET';
 		userOptions.async=false;
-		userOptions.resultType=app.ajax.resultType.GET;
-		app.ajax(userOptions);
+		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
 		// if(userOptions.mobile==undefined){
 		// 	console.error('arguments error!');
 		// 	return;
@@ -70,9 +69,8 @@ var app=app||{};
 	app.user.getUserInfo=function(userOptions){
 		userOptions=userOptions||{}
 		userOptions.url=app.config.userdomain+'user/get';
-		userOptions.resultType=app.ajax.resultType.GET;
 		userOptions.type='GET';
-		app.ajax(userOptions);
+		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
 	};
 	//status 1待审核2失败3成功
 	app.user.getUserRoles=function(userid,token){

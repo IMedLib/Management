@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>云板书上传 | IMedlib</title>
+
+    <link href="../../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bower_components/font-awesome/dist/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../bower_components/spin/stylesheets/jquery.spin.css">
+    <link href="../../css/animate.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../bower_components/sweetalert/dist/sweetalert.css">
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element">
+                    </div>
+                    <div class="logo-element">
+                        IMedlib
+                    </div>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-user"></i> <span class="nav-label">个人中心</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="../../user/profile">个人信息</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="active">
+                    <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">资源中心</span> <span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="../list.html">我的资源</a>
+                        </li>
+                        <li>
+                            <a href="#">云板书<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                               <li class="active">
+                                   <a href="ybsupload.html">云板书上传</a>
+                               </li>
+                                <li>
+                                     <a href="list.html">我的云板书</a>
+                                </li>
+                           </ul>
+                       </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-book"></i> <span class="nav-label">课程课堂</span> <span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="../../course/list.html">我的课程</a>
+                        </li>
+                        <li>
+                            <a href="../../class/list.html">我的课堂</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+
+    <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                <!-- <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                    <form role="search" class="navbar-form-custom" method="post" action="#">
+                        <div class="form-group">
+                            <input type="text" placeholder="Search for something../..." class="form-control" name="top-search" id="top-search">
+                        </div>
+                    </form>
+                </div> -->
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <strong class="font-bold" id="username"></strong>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-sign-out"></i> 退出
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+        </div>
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="wrapper wrapper-content">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-title">
+                                        <h5>云板书上传</h5>
+                                    </div>
+                                    <div class="ibox-content">
+                                        <form id="form" method="POST" class="form-horizontal" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">云板书标题</label>
+
+                                                <div class="col-sm-10"><input type="text" class="form-control" id="title"></div>
+                                            </div>
+                                            <div class="hr-line-dashed"></div>
+
+                                            <!-- <div class="form-group">
+                                                <label class="col-sm-2 control-label">云板书备注</label>
+                                                <div class="col-sm-10"> 
+                                                    <textarea class="form-control" id="remark"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="hr-line-dashed"></div> -->
+                                            <div class="form-group">
+                                                <div id="uploader">
+                                                    <label class="col-sm-2 control-label">选择本地资源</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="file" name="uploadfile" id="uploadfile" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="hr-line-dashed"></div>
+                                            <div class="form-group">
+                                                <div class="col-sm-4 col-sm-offset-2">
+                                                    <button class="btn btn-primary" type="submit" id="submit">保存</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="pull-right">
+                
+            </div>
+            <div>
+                <strong>Copyright</strong> IMedlib &copy; 2015
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<script src="../../bower_components/slimscroll/jquery.slimscroll.min.js"></script>
+
+<script type="text/javascript" src="../../js/app.js"></script>
+<script type="text/javascript" src="../../js/app.user.js"></script>
+<script type="text/javascript" src="../../bower_components/spin/javascripts/jquery.spin.js"></script>
+<script type="text/javascript" src="../../js/app.spin.js"></script>
+<script type="text/javascript" src="../../bower_components/blockUI/jquery.blockUI.js"></script>>
+<script type="text/javascript" src="../../js/app.blockUI.js"></script>
+<!-- Custom and plugin javascript -->
+<script src="../../js/inspinia.js"></script>
+<script src="../../bower_components/PACE/pace.min.js"></script>
+<!--sweetalert-->
+<script type="text/javascript" src="../../bower_components/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript" src="../../js/app-sweetalert.js"></script>
+<!--jqueryform-->
+<script type="text/javascript" src="../../js/plugins/jQueryForm/jQueryForm.js"></script>
+<script>
+    jQuery(document).ready(function($) {
+        var userid='';
+        var token='';
+        var title='';
+        // var remark='';
+        init();
+        function init(){
+            getUserInfo();
+            // getUserGroups();
+        }
+        function getUserInfo(){
+            userid=app.cookie.get('userid');
+            token=app.cookie.get('token')
+            if(userid==''||token==''){
+             window.location.href="../../login.html";
+            }
+            app.user.getUserInfo({
+                data:{uid:userid},
+                success:function(data){
+                    if(data=="") return false;
+                    $('#username').text(data.uname);
+                }
+            });
+        };
+       var options = {  
+            url:app.config.upload+'YunBook',
+            beforeSubmit:  showRequest,  //提交前处理 
+            success:       showResponse,  //处理完成 
+            resetForm: true,  
+            timeout: 60000,
+            dataType:  'json',
+            error:function(){
+                app.ui.clearBusy('#form');
+                app.message.error('提交超时，请重新提交！');
+            }  
+        };  
+        $('form').submit(function() {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+        function showRequest(formData, jqForm, options){
+            var file = $('#uploadfile').get(0).files[0];
+            if (file == null) {
+                app.message.error( "请选择上传资源!","出错了");
+                return false;
+            }
+            // remark=$('#remark').val();
+            title=$('#title').val();
+            app.ui.setBusy('#form');
+        }
+        function showResponse(responseText, statusText){
+            if(responseText.code==0){
+                $.ajax({
+                    url: app.config.resourcedomain+'YunBook/add',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        width:responseText.file_width,
+                        height:responseText.file_height,
+                        size:responseText.file_length,
+                        uri:app.config.ip+responseText.file_path,
+                        title:title,
+                        key:userid,
+                        zoom:responseText.zoom,
+                        token:token
+                    },
+                })
+                .done(function(data) {
+                    if(data.code==0){
+                        app.message.success('上传成功！');
+                    // app.message.confirm('确定继续上传，取消进入资料列表','上传成功！',function(isConfirmed){
+                    //     if(!isConfirmed)
+                    //         window.location.href='list.html';
+                        // else{
+                        //     $('form').reset();
+                        // }
+                    // });
+                    }else{
+                        app.message.error(data.msg);
+                    }
+                })
+                .fail(function() {
+                    app.message.error("提交失败");
+                })
+                .always(function(){
+                    app.ui.clearBusy('#form');
+                });
+            }
+        }
+    });
+</script>
+</body>
+
+</html>
