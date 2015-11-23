@@ -195,8 +195,8 @@
                 app.resource.ybs.info({
                     data:{uid:userid},
                     success:function(data){
-                        if(data.Count!=undefined)
-                            count=data.Count;
+                        if(data.info.Count!=undefined)
+                            count=data.info.Count;
                     }
                 })
                 return count;

@@ -15,8 +15,7 @@ var app=app||{};
 		userOptions.url=app.config.resourcedomain+'YunBook/info';
 		userOptions.async=false;
 		userOptions.type='GET';
-		// userOptions.resultType=app.ajax.resultType.INFO;
-		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
+		$.ajax(userOptions);
 	}
 	/*
 		uid 用户id
@@ -27,9 +26,8 @@ var app=app||{};
 	app.resource.ybs.list=function(userOptions){
 		userOptions=userOptions||{};
 		userOptions.url=app.config.resourcedomain+'YunBook/List';
-		// userOptions.resultType=app.ajax.resultType.LIST;
 		userOptions.type='GET';
-		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
+		$.ajax(userOptions);
 	}
 
 	app.resource.ybs.update=function(userOptions){
@@ -39,7 +37,7 @@ var app=app||{};
 			return false;
 		userOptions.url=app.config.resourcedomain+'YunBook/Put';
 		userOptions.type='POST';
-		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
+		$.ajax(userOptions);
 		
 	}
 

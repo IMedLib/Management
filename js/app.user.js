@@ -12,57 +12,48 @@ var app=app||{};
 		userOptions.url=app.config.userdomain+'Captcha/Add/';
 		userOptions.type='GET';
 
-		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
+		$.ajax(userOptions);
 		
 	};
 	app.user.register=function(userOptions){
 		userOptions=userOptions||{};
 		userOptions.url=app.config.userdomain+'User/Add/Reg/';
-		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
+		$.ajax(userOptions);
 	};
 	app.user.login=function(userOptions){
 		userOptions=userOptions||{};
 		userOptions.url=app.config.userdomain+'User/Put/Login/';
-		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
+		$.ajax(userOptions);
 	}
 	
-	//手机号是否已注册
-
-	app.user.IsExist=function(userOptions){
+	/*手机号是否已注册
+		return flase 不存在
+	*/
+	app.user.isExist=function(userOptions){
+		var flag=false;
 		userOptions=userOptions||{};
 		userOptions.url=app.config.userdomain+'user/get';
-		userOptions.type='GET';
 		userOptions.async=false;
-		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
-		// if(userOptions.mobile==undefined){
-		// 	console.error('arguments error!');
-		// 	return;
-		// }
-		// var options= $.extend({}, app.ajax.defaultOpts, {
-		// 	url:app.config.userdomain+'user/get',
-		// 	async:false,
-		// 	data:{
-		// 		uid:userOptions.userid,
-		// 		mobile:userOptions.mobile,
-		// 		uname:userOptions.username
-		// 	}});
-		// return JSON.parse($.ajax(options).responseText).get.length==undefined;
-		
+		$.ajax(userOptions).done(function(data){
+			flag = data.get.uid==undefined?false:true;
+		});
+		return flag;
 	}
 
-	//用户名是否已占用
-	app.user.userNameIsExist=function(userOptions){
-
-	}
-	
-	//设置昵称
-	app.user.setNickName=function(userOptions){
-
-	}
-	
-	//设置用户名
-	app.user.setUserName=function(userOptions){
-
+	/*设置用户信息
+		@param uname 用户名 
+		@param nname 昵称
+		@param pwd 支付密码
+	*/
+	app.user.setUserInfo=function(userOptions){
+		var flag=false;
+		userOptions=userOptions||{};
+		userOptions.url=app.config.userdomain+'user/put';
+		userOptions.type="POST";
+		$.ajax(userOptions).done(function(data){
+			flag=data.code==0?true:false;
+		});
+		return false;
 	}
 
 	
@@ -70,7 +61,7 @@ var app=app||{};
 		userOptions=userOptions||{}
 		userOptions.url=app.config.userdomain+'user/get';
 		userOptions.type='GET';
-		$.ajax(userOptions).done(userOptions.success).fail(userOptions.error);
+		$.ajax(userOptions);
 	};
 	//status 1待审核2失败3成功
 	app.user.getUserRoles=function(userid,token){

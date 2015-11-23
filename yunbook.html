@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+  <style type="text/css">
+    html, body { height: 100%; margin: 0; padding: 0; }
+    #map { height: 100%; }
+  </style>
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="bower_components/summernote/dist/summernote.css">
+  <!-- <link href="bower_components/font-awesome/css/font-awesome.css" rel="stylesheet"> -->
+  <link rel="stylesheet" type="text/css" href="bower_components/mjolnic-bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+  <title>云板书</title>
+</head>
+<body>
+  <div class="modal fade" id="modal1"  role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">新建标注</h4>
+        </div>
+        <div class="modal-body">
+          <!-- Create the editor container -->
+          <div id="editor" class="summernote">
+            
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          <button type="button" id='submit' class="btn btn-primary">保存</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  <div id="map"></div>
+  <script type="text/javascript" src="js/googlemap/mapapi.js"></script>
+  <script type="text/javascript" src="js/googlemap/drawing.js"></script>
+  <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>  
+
+  <script type="text/javascript" src="js/googlemap/xmlwriter.js"></script>
+  <script type="text/javascript" src="js/googlemap/blitz-gmap-editor-ea7son.js"></script>
+  <script type="text/javascript" src="js/app.js"></script>
+  <script type="text/javascript" src="js/app.resource.js"></script>
+  <script type="text/javascript" src="bower_components/summernote/dist/summernote.js"></script>
+  <script type="text/javascript" src="bower_components/summernote/lang/summernote-zh-CN.js"></script>
+  <script type="text/javascript" src="bower_components/mjolnic-bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+  <script type="text/javascript">
+    var path='';
+    var width=0;
+    var height=0;
+    var zoomNum=8;
+    var myLatlng;
+    var polyOptions = {};
+    var id=0;
+    var key;
+    var token;
+    init();
+
+    function init(){
+        initSetting();
+        initMap();
+    }
+    function initSetting(){
+        path=app.utils.getUrlParam('path');
+        width=app.utils.getUrlParam('w');
+        height=app.utils.getUrlParam('h');
+        zoomNum=parseInt(app.utils.getUrlParam('z'));
+        id=parseInt(app.utils.getUrlParam('id'));
+        
+        key=app.cookie.get('userid');
+        token=app.cookie.get('token');
+
+        if(path==''||path==undefined){
+            window.location.href="/login.html";
+        }
+        polyOptions={
+          fillColor: "#ff7f00",
+          fillOpacity: 0.45,
+          strokeColor: "rgba(255, 0, 0, 0.8)",
+          strokeOpacity: 0.4,
+          strokeWeight: 5,
+          //fillOpacity: 0, //0.45
+          editable: false,
+          draggable: false,
+          clickable: false
+        };
+        if(width==0||height==0){
+          myLatlng = new google.maps.LatLng(80,-160);
+        }else{
+          $.ajax({
+            url: app.config.upload+'PixelLngLat',
+            type: 'GET',
+            dataType: 'json',
+            async:false,
+            data: {
+              pixelX:parseFloat(width/2),
+              pixelY:parseFloat(height/2),
+              zoom:zoomNum
+            },
+          })
+          .done(function(data) {
+            myLatlng = new google.maps.LatLng(data.lat,data.lng);
+          })
+        }
+    }
+    function initSummernote(){
+      $('.summernote').summernote({
+        lang:'zh-CN',
+        focus:true,
+        toolbar:[
+          ['color', ['color']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['para', ['ul', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link']],
+          ['view', ['fullscreen', 'codeview']]
+        ]
+      });
+      $('.summernote').code('');
+    }
+    function addEvent(obj, eventname, callback) {
+
+        //其他浏览器
+        if (window.addEventListener) {
+            obj.addEventListener(eventname, callback, false);
+        }
+        //ie
+        else {
+            obj.attachEvent('on' + eventname, callback);
+        }
+
+        return;
+    }
+
+    function initMap() {
+
+      
+      var map = new google.maps.Map(document.getElementById('map'), {
+        center: myLatlng,
+        zoom: 3,
+        streetViewControl: false,
+        mapTypeControlOptions: {
+          mapTypeIds: ['moon']
+        }
+      });
+      var moonMapType = new google.maps.ImageMapType({
+        
+        getTileUrl: function(coord, zoom) {
+          return path +'/' + zoom + '/' + coord.x + '/' +(coord.y) + '.png';
+        },
+        tileSize: new google.maps.Size(256, 256),
+        maxZoom: zoomNum,
+        minZoom: 2,
+        radius: 1738000,
+        name: '云板书'
+      });
+
+      map.mapTypes.set('moon', moonMapType);
+      map.setMapTypeId('moon');
+      var drawingManager = new google.maps.drawing.DrawingManager({
+        //drawingMode: google.maps.drawing.OverlayType.MARKER,
+        drawingControl: true,
+        drawingControlOptions: {
+          position: google.maps.ControlPosition.BOTTOM_LEFT,
+          drawingModes: [
+          google.maps.drawing.OverlayType.MARKER,
+          google.maps.drawing.OverlayType.CIRCLE,
+          google.maps.drawing.OverlayType.POLYGON,
+          google.maps.drawing.OverlayType.POLYLINE,
+          google.maps.drawing.OverlayType.RECTANGLE
+          ]
+        },
+        markerOptions: {icon: '/js/googlemap/markers2/marker_sprite.png'},
+        circleOptions: {
+          fillColor: '#ffff00',
+          fillOpacity: 1,
+          strokeWeight: 5,
+          clickable: false,
+          editable: true,
+          zIndex: 1
+        }
+      });
+      drawingManager.setMap(map);
+      //===== source control 
+        // var sourceControlDiv = document.createElement('DIV');
+        // sourceControlDiv.id = "source";
+        // var sourceDiv = document.createElement('DIV');
+        // sourceDiv.id = "sourceDiv";
+        // sourceDiv.style.color = "#939393";
+        // sourceDiv.innerHTML = "来源：丽水护士学校";
+        // sourceControlDiv.appendChild(sourceDiv);
+        // map.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(sourceControlDiv);
+        //===== end source control
+
+
+      function StrokeWeightControl(controlDiv, map , elid , values,callback) {
+          var el_select = document.createElement('select'); //document.getElementById('color-palette');
+          el_select.id = elid ;//"colorPicker";
+
+          for (var i = 0; i < values.length; ++i) {
+              var el_option = document.createElement('option');
+              el_option.value = values[i];
+              el_option.innerHTML = values[i];
+              el_select.appendChild(el_option);
+          }
+          
+          if(elid == "strokeWeightSel"){
+              //给select标签添加事件
+              addEvent(el_select,'change',function(){
+                  //alert(this.value);
+                  polyOptions.strokeWeight = this.value;
+              });
+          }
+
+          controlDiv.appendChild(el_select);
+      }
+      function ColorPickerControl(controlDiv, map , elid) {
+
+          var colorPalette = document.createElement('input');
+          colorPalette.id = elid ;//"colorPicker";
+          colorPalette.type="text";
+          colorPalette.className='form-control';
+          colorPalette.value="rgba(255, 100, 100, 0.4)";
+          colorPalette.ColorPickerSliders({
+              size: 'sm',
+              placement: 'top',
+              swatches: false,
+              sliders: false
+          });
+          controlDiv.appendChild(colorPalette);
+          
+      }
+      var strokeWeightDiv = document.createElement('div');
+      strokeWeightDiv.id = "strokeWeightDiv";
+      strokeWeightDiv.title = "边框粗细";
+      strokeWeightDiv.style.margin="5px";
+      strokeWeightControl1 = new StrokeWeightControl(strokeWeightDiv, map,"strokeWeightSel",[1,2,3,4,5,8,10,15,20,40],null);
+      map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(strokeWeightDiv);
+
+      // var colorPickerStrokeDiv = document.createElement('div');
+      // colorPickerStrokeDiv.id = "colorPickerStrokeDiv";
+      // colorPickerStrokeDiv.title = "边框";
+      // colorPickerStrokeDiv.style.margin="5px";
+      // colorPickerControl = new ColorPickerControl(colorPickerStrokeDiv, map,"colorPickerStroke");
+      // map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(colorPickerStrokeDiv);
+
+
+      google.maps.event.addDomListener(map.getDiv(),'mousedown',function(e){
+        //do it with the right mouse-button only
+        if(e.button!=2){
+          return false;
+        }
+        //the polygon
+        //if(!poly){
+        var poly=new google.maps.Polyline(polyOptions);//{map:map,clickable:false}
+        poly.setMap(map);
+        //}
+        //move-listener
+        var move=google.maps.event.addListener(map,'mousemove',function(e){
+          poly.getPath().push(e.latLng);
+        });
+        //mouseup-listener
+        google.maps.event.addListenerOnce(map,'mouseup',function(e){//addListenerOnce
+          google.maps.event.removeListener(move);
+        });
+
+      });
+      google.maps.event.addListener(drawingManager,'overlaycomplete',function(event){
+        if(event.type==google.maps.drawing.OverlayType.MARKER){
+          $('#modal1').modal();
+
+
+          $('#submit').on('click',function(){
+            var contentString=$('.summernote').code();
+            if(contentString=='') return;
+            var infowindow = new google.maps.InfoWindow({
+              content: contentString
+            });
+            event.overlay.addListener('click', function() {
+              infowindow.open(map, event.overlay);
+            });
+            event.overlay.content=contentString;
+            event.overlay.type=event.type;
+            BlitzMap.push(event.overlay);
+            save();
+            $('#modal1').modal('hide');
+          })
+        }else{
+            event.overlay.type=event.type;
+            BlitzMap.push(event.overlay);
+            save();
+        }
+        
+        
+      });
+      function save(){
+          if(id==0||key==''||token=='') return false;
+          var json=BlitzMap.toJSONString(map);
+          app.resource.ybs.update({
+              data:{
+                key:key,
+                token:token,
+                id:id,
+                remark:json
+              }
+          });
+      }
+      $('#modal1').on('show.bs.modal', function() {
+          initSummernote();
+      });
+    }
+  </script>
+</body>
+</html>

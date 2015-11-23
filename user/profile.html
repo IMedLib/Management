@@ -157,9 +157,9 @@
             app.user.getUserInfo({
                 data:{uid:app.cookie.get('userid')},
                 success:function(data){
-                    if(data=="") return false;
-                    $('#nickname').text(data.nname);
-                    $('#username').text(data.uname);
+                    if(data==""||data.code!=0) return false;
+                    $('#nickname').text(data.get.nname);
+                    $('#username').text(data.get.uname);
                 }
             });
             

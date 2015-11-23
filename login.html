@@ -58,8 +58,16 @@
     <script type="text/javascript" src="js/app-sweetalert.js"></script>
 
     <script type="text/javascript">
+        checkLogin();
+        function checkLogin(){
+            if(app.cookie.get('userid')!='')
+            {
+                window.location.href="user/profile.html";
+            }
+        }
         var wait=app.config.wait;
         jQuery(document).ready(function($) {
+
             jQuery.validator.addMethod("isMobile", function(value, element) {
                 var length = value.length;
                 return this.optional(element) || (length == 11 && /^(((13)|(15)|(17)|(18))+\d{9})$/.test(value));
