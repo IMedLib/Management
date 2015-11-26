@@ -9,7 +9,7 @@
     <title>我的课程 | IMedlib</title>
 
     <link href="../../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../..//bower_components/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../bower_components/font-awesome/css/font-awesome.css" rel="stylesheet">
 
     <link href="../../css/animate.css" rel="stylesheet">
     <link href="../../css/style.css" rel="stylesheet">
@@ -19,55 +19,58 @@
 
 <body>
 
-    <div id="wrapper">
+<div id="wrapper">
 
-        <nav class="navbar-default navbar-static-side" role="navigation">
-            <div class="sidebar-collapse">
-                <ul class="nav" id="side-menu">
-                    <li class="nav-header">
-                        <div class="dropdown profile-element">
-                        </div>
-                        <div class="logo-element">
-                            IMedlib
-                        </div>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-user"></i> <span class="nav-label">个人中心</span><span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="../../user/profile">个人信息</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="active">
-                        <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">资源中心</span> <span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="../list.html">我的资源</a>
-                            </li>
-                            <li>
-                                <a href="#">云板书<span class="fa arrow"></span></a>
-                                <ul class="nav nav-third-level">
-                                     <li>
-                                         <a href="ybsupload.html">云板书上传</a>
-                                     </li>
-                                     <li class="active">
-                                         <a href="list.html">我的云板书</a>
-                                     </li>
-                                </ul>
-                            </li>
-                        </ul>
-                 </li>
-                 <li>
-                    <a href="#"><i class="fa fa-book"></i> <span class="nav-label">课程课堂</span> <span class="fa arrow"></span></a>
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element">
+                    </div>
+                    <div class="logo-element">
+                        IMedlib
+                    </div>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-user"></i> <span class="nav-label">个人中心</span><span
+                            class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="../../course/list.html">我的课程</a>
-                        </li>
-                        <li>
-                            <a href="../../class/list.html">我的课堂</a>
+                            <a href="../../user/profile.html">个人信息</a>
                         </li>
                     </ul>
+                </li>
+                <li class="active">
+                    <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">资源中心</span> <span
+                            class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="../list.html">我的资源</a>
+                        </li>
+                        <li>
+                            <a href="#">云板书<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                                <li>
+                                    <a href="ybsupload.html">云板书上传</a>
+                                </li>
+                                <li class="active">
+                                    <a href="list.html">我的云板书</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-book"></i> <span class="nav-label">课程课堂</span> <span
+                            class="fa arrow"></span></a>
+                    <!--<ul class="nav nav-second-level">-->
+                    <!--<li>-->
+                    <!--<a href="../../course/list.html">我的课程</a>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                    <!--<a href="../../class/list.html">我的课堂</a>-->
+                    <!--</li>-->
+                    <!--</ul>-->
                 </li>
             </ul>
 
@@ -108,16 +111,18 @@
                             </h4>
                         </div>
                         <div class="ibox-content profile-content">
-                            <div class="row"> <div id="ybs"></div></div>
+                            <div class="row">
+                                <div id="ybs"></div>
+                            </div>
                             <div class="pagination" id="ybsp">
                                 <a href="#" class="first" data-action="first">&laquo;</a>
                                 <a href="#" class="previous" data-action="previous">&lsaquo;</a>
-                                <input type="text" readonly="readonly"/>
+                                <input title="" type="text" readonly="readonly"/>
                                 <a href="#" class="next" data-action="next">&rsaquo;</a>
                                 <a href="#" class="last" data-action="last">&raquo;</a>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -159,7 +164,10 @@
                 </div>
             </div>
             <div class="col-sm-8">
-                <a target="_blank" href="/yunbook.html?path={{$value.uri}}&id={{$value.id}}&w={{$value.width}}&h={{$value.height}}&z={{$value.zoom}}"><h3><strong>{{$value.title}}</strong></h3></a>
+                <a target="_blank"
+                   href="/yunbook.html?path={{$value.uri}}&id={{$value.id}}&w={{$value.width}}&h={{$value.height}}&z={{$value.zoom}}">
+                    <h3><strong>{{$value.title}}</strong></h3></a>
+
                 <p>{{$value.remark}}</p>
             </div>
             <div class="clearfix"><p>{{$value.itime}}</p></div>
@@ -168,61 +176,64 @@
     {{/each}}
 </script>
 <script>
-    jQuery(document).ready(function($) {
-            var userid='';
-            var token='';
-            var limit=app.config.limit;
-            init();
-            function init(){
-                getUserInfo();
-                getList($('#ybs'),limit,1);
+    jQuery(document).ready(function ($) {
+        var userid;
+        var token;
+        var limit = app.config.limit;
+        init();
+        function init() {
+            getUserInfo();
+            getList($('#ybs'), limit, 1);
+        }
+
+        function getUserInfo() {
+            userid = app.cookie.get('userid');
+            token = app.cookie.get('token');
+            if (typeof userid == "undefined") {
+                window.location.href = "../../login.html";
             }
-            function getUserInfo(){
-                userid=app.cookie.get('userid');
-                token=app.cookie.get('token')
-                if(userid==''||token==''){
-                   window.location.href="../../login.html";
-                }
-                app.user.getUserInfo({
-                    data:{uid:userid},
-                    success:function(data){
-                        $('#username').text(data.uname||'');
-                    }
-                });
-           }
-           function getCount(){
-                var count=0; 
-                app.resource.ybs.info({
-                    data:{uid:userid},
-                    success:function(data){
-                        if(data.info.Count!=undefined)
-                            count=data.info.Count;
-                    }
-                })
-                return count;
-            }
-            function getList(object,limit,offset){
-                app.resource.ybs.list({
-                    data:{
-                        uid:userid,
-                        limit:limit,
-                        offset:offset,
-                    },
-                    success:function(data){
-                        var html=template('listTemplate',data);
-                        object.innerHtml='';
-                        object.append(html);
-                    }
-                });
-                
-            }
-            $('#ybsp').jqPagination({
-                max_page:Math.ceil(getCount()/limit),
-                page_string :'第{current_page}页,共{max_page}页',
-                paged:function (page) {
-                    getList($('#ybs'),limit,page);
+            app.user.getUserInfo({
+                data: {uid: userid},
+                success: function (data) {
+                    $('#username').text(data.uname || '');
                 }
             });
+        }
+
+        function getCount() {
+            var count = 0;
+            app.resource.ybs.info({
+                data: {uid: userid},
+                success: function (data) {
+                    if (typeof data.info.Count == "number")
+                        count = data.info.Count;
+                }
+            });
+            return count;
+        }
+
+        function getList(object, limit, offset) {
+            app.resource.ybs.list({
+                data: {
+                    uid: userid,
+                    limit: limit,
+                    offset: offset
+                },
+                success: function (data) {
+                    var html = template('listTemplate', data);
+                    object.empty().append(html);
+                }
+            });
+
+        }
+
+        $('#ybsp').jqPagination({
+            max_page: Math.ceil(getCount() / limit),
+            page_string: '第{current_page}页,共{max_page}页',
+            paged: function (page) {
+                getList($('#ybs'), limit, page);
+            }
+        });
 
     });
 </script>

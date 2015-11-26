@@ -1,5 +1,6 @@
 var app = app || {};
 (function () {
+    document.write("<script src='/bower_components/spin/javascripts/spin.js'></script>");
 
     $.fn.spin = function(opts) {
           this.each(function() {

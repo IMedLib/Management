@@ -1,6 +1,9 @@
 var app = app || {};
 app.message=app.message||{};
+
 (function ($) {
+    document.write("<script src='/bower_components/sweetalert/dist/sweetalert.min.js'></script>");
+    document.write("<link rel='stylesheet' type='text/css' href='/bower_components/sweetalert/dist/sweetalert.css'>");
     if (!sweetAlert || !$) {
         return;
     }
@@ -86,7 +89,7 @@ app.message=app.message||{};
             callback = titleOrCallback;
         } else if (titleOrCallback) {
             userOpts.title = titleOrCallback;
-        };
+        }
 
         var opts = $.extend(
             {},

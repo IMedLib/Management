@@ -36,7 +36,7 @@
                 <div class="form-group">
                     <button class="btn btn-primary block full-width" id="code">点击获取验证码</button>
                 </div>
-                <button type="submit" class="btn btn-primary block full-width m-b">登录</button>
+                <button id="login" class="btn btn-primary block full-width m-b">登录</button>
 
                 <p class="text-muted text-center"><small>没有账号?注册一个</small></p>
                 <a class="btn btn-sm btn-white btn-block" href="register.html">注册</a>
@@ -50,29 +50,27 @@
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <script src="js/app.js"></script>
-    <script type="text/javascript" src="js/app.jquery.js"></script>
     <script type="text/javascript" src="js/app.user.js"></script>
     <script type="text/javascript" src="bower_components/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script type="text/javascript" src="js/plugins/jQueryForm/jQueryForm.js"></script>
     <script type="text/javascript" src="bower_components/sweetalert/dist/sweetalert.min.js"></script>
     <script type="text/javascript" src="js/app-sweetalert.js"></script>
 
     <script type="text/javascript">
         checkLogin();
         function checkLogin(){
-            if(app.cookie.get('userid')!='')
+            if(typeof app.cookie.get('userid')== "number")
             {
                 window.location.href="user/profile.html";
             }
         }
         var wait=app.config.wait;
         jQuery(document).ready(function($) {
-
+            var form=$('#form');
             jQuery.validator.addMethod("isMobile", function(value, element) {
                 var length = value.length;
                 return this.optional(element) || (length == 11 && /^(((13)|(15)|(17)|(18))+\d{9})$/.test(value));
             }, "手机号码格式错误!");
-            $('#form').validate({
+            form.validate({
                 rules:{
                     mobile:{
                         required:true,
@@ -86,24 +84,26 @@
                 }
             });
             $('#code').on('click',function(){
-                if($('#form').validate().form()){
+                if(form.validate().form()){
                     setTime($(this));
                     getVerificationCode($('#mobile').val());
                 }
 
             });
-            $('#form').submit(function() {
+            $('#login').on('click',function() {
                 if(!$(this).validate().form()){
                     return false;
                 }
-                if($('#yzm').val()==''){
+                var yzm=document.getElementById('yzm');
+                var mobile=document.getElementById('mobile');
+                if(yzm.value==''){
                     app.message.error('验证码不能为空');
                     return false;
                 }
                 app.user.login({
                     data:{
-                        mobile:$('#mobile').val(),
-                        vcode:$('#yzm').val()
+                        mobile:mobile.value,
+                        vcode:yzm.value
                     },
                     success:function(result){
                         if(result.code==1)
@@ -113,7 +113,7 @@
                             app.message.error('注册出错，请重新尝试！');
                         }else{
                             app.cookie.set('userid',result.uid,7);
-                            app.cookie.set('token',encodeURIComponent(result.token),7);
+                            app.cookie.set('token',result.token,7);
                             window.location.href="user/profile.html";
                         }
                     }

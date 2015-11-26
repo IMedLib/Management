@@ -34,7 +34,7 @@
                     <a href="#"><i class="fa fa-user"></i> <span class="nav-label">个人中心</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="active">
-                            <a href="/user/profile">个人信息</a>
+                            <a href="#">个人信息</a>
                         </li>
                     </ul>
                 </li>
@@ -60,14 +60,14 @@
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-book"></i> <span class="nav-label">课程课堂</span> <span class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        <li>
-                            <a href="../course/list.html">我的课程</a>
-                        </li>
-                        <li>
-                            <a href="../class/list.html">我的课堂</a>
-                        </li>
-                    </ul>
+                    <!--<ul class="nav nav-second-level">-->
+                        <!--<li>-->
+                            <!--<a href="../course/list.html">我的课程</a>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<a href="../class/list.html">我的课堂</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
                 </li>
             </ul>
 
@@ -90,7 +90,7 @@
                         <strong class="font-bold" id="username"></strong>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="javascript:onclick=logout()">
                             <i class="fa fa-sign-out"></i> 退出
                         </a>
                     </li>
@@ -147,6 +147,11 @@
 <script type="text/javascript" src="../bower_components/sweetalert/dist/sweetalert.min.js"></script>
 <script type="text/javascript" src="../js/app-sweetalert.js"></script>
 <script>
+    function logout(){
+        app.cookie.remove('userid');
+        app.cookie.remove('token');
+        window.location.href="../login.html";
+    }
     jQuery(document).ready(function($) {
         init();
         function init(){
@@ -154,8 +159,9 @@
             // getUserGroups();
         }
         function getUserInfo(){
+            var userid=app.cookie.get('userid');
             app.user.getUserInfo({
-                data:{uid:app.cookie.get('userid')},
+                data:{uid:userid},
                 success:function(data){
                     if(data==""||data.code!=0) return false;
                     $('#nickname').text(data.get.nname);
@@ -164,6 +170,7 @@
             });
             
         }
+
         // function getUserGroups(){
         //     var data=app.user.getUserGroupList(app.key,app.token);
         //     if(data.code==0){

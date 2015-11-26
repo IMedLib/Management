@@ -1,5 +1,6 @@
 var app = app || {};
 (function () {
+    document.write("<script src='/bower_components/blockUI/jquery.blockUI.js'></script>");
 
     if (!$.blockUI) {
         return;
