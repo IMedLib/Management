@@ -122,14 +122,12 @@
                                 <a href="#" class="last" data-action="last">&raquo;</a>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
         <div class="footer">
             <div class="pull-right">
-
             </div>
             <div>
                 <strong>Copyright</strong> IMedlib &copy; 2015
@@ -193,13 +191,28 @@
                 window.location.href = "../../login.html";
             }
             app.user.getUserInfo({
-                data: {uid: userid},
+                data: {
+                    uid: userid,
+                    key: userid,
+                    token: token
+                },
                 success: function (data) {
-                    $('#username').text(data.uname || '');
+                    if (data != "") {
+                        if (typeof data.href != 'undefined' && data.href != "") {
+                            window.location.href = data.href;
+                        }
+                        if (data.code != 0) {
+                            app.message.error(data.msg);
+                            return false;
+                        }
+                    }
+                    $('#username').text(data.get.uname);
+                },
+                error: function () {
+                    app.message.error('网络超时，请稍后再试！');
                 }
             });
         }
-
         function getCount() {
             var count = 0;
             app.resource.ybs.info({
@@ -220,8 +233,15 @@
                     offset: offset
                 },
                 success: function (data) {
-                    var html = template('listTemplate', data);
-                    object.empty().append(html);
+                    if(data.code==0) {
+                        var html = template('listTemplate', data);
+                        object.empty().append(html);
+                    }else{
+                        app.message.error(data.msg==''?'请稍后再试！':data.msg);
+                    }
+                },
+                error:function(){
+                    app.message.error('网络超时，请稍后再试！');
                 }
             });
 

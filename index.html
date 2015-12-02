@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf8"/>
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100%;
+        }
+    </style>
+    <title>田家园</title>
+</head>
+<body>
+<div id="map"></div>
+<script type="text/javascript" src="js/googlemap/mapapi.js"></script>
+<script type="text/javascript" src="js/googlemap/drawing.js"></script>
+<script src="./js/googlemap/CanvasLayer.js"></script>
+<script type="text/javascript">
+    var polyOptions = {};
+    var key;
+    var token;
+    var map;
+
+    function init() {
+       initSetting();
+        initMap();
+    }
+    function initSetting() {
+        polyOptions = {
+            fillColor: "#ff7f00",
+            fillOpacity: 0.45,
+            strokeColor: "rgba(255, 0, 0, 0.8)",
+            strokeOpacity: 0.4,
+            strokeWeight: 5,
+            //fillOpacity: 0, //0.45
+            editable: false,
+            draggable: false,
+            clickable: false
+        };
+
+    }
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: new google.maps.LatLng(43.61221676817571, 33.7060546875),
+            zoom: 4,
+            streetViewControl: false,
+            mapTypeControlOptions: {
+                mapTypeIds: ['moon']
+            }
+        });
+
+//        map.fitBounds();
+        var moonMapType = new google.maps.ImageMapType({
+
+            getTileUrl: function (coord, zoom) {
+                zoom--;
+                return 'http://121.41.92.56/FieldHome' + '/' + zoom + '/' + coord.x + '/' + (coord.y) + '.png';
+            },
+            tileSize: new google.maps.Size(256, 256),
+            maxZoom: 13,
+            minZoom: 4,
+            radius: 1738000,
+            name: '田家园'
+        });
+        function CoordMapType(tileSize) {
+            this.tileSize = tileSize;
+        }
+
+        map.overlayMapTypes.insertAt(
+                0, new CoordMapType(new google.maps.Size(256, 256)));
+        CoordMapType.prototype.getTile = function (coord, zoom, ownerDocument) {
+            var div = ownerDocument.createElement('div');
+            div.innerHTML = coord;
+            div.style.width = this.tileSize.width + 'px';
+            div.style.height = this.tileSize.height + 'px';
+            div.style.fontSize = '10';
+            div.style.borderStyle = 'solid';
+            div.style.borderWidth = '1px';
+            div.style.borderColor = '#AAAAAA';
+            return div;
+        };
+        map.mapTypes.set('moon', moonMapType);
+        map.setMapTypeId('moon');
+        var drawingManager = new google.maps.drawing.DrawingManager({
+            //drawingMode: google.maps.drawing.OverlayType.MARKER,
+            drawingControl: true,
+            drawingControlOptions: {
+                position: google.maps.ControlPosition.BOTTOM_LEFT,
+                drawingModes: [
+                    google.maps.drawing.OverlayType.MARKER,
+                    google.maps.drawing.OverlayType.CIRCLE,
+                    google.maps.drawing.OverlayType.POLYGON,
+                    google.maps.drawing.OverlayType.POLYLINE,
+                    google.maps.drawing.OverlayType.RECTANGLE
+                ]
+            },
+            markerOptions: {icon: '/js/googlemap/markers2/marker_sprite.png'},
+            circleOptions: {
+                fillColor: '#ffff00',
+                fillOpacity: 1,
+                strokeWeight: 5,
+                clickable: false,
+                editable: true,
+                zIndex: 1
+            }
+        });
+        drawingManager.setMap(map);
+
+
+        function StrokeWeightControl(controlDiv, map, elid, values, callback) {
+            var el_select = document.createElement('select'); //document.getElementById('color-palette');
+            el_select.id = elid;//"colorPicker";
+
+            for (var i = 0; i < values.length; ++i) {
+                var el_option = document.createElement('option');
+                el_option.value = values[i];
+                el_option.innerHTML = values[i];
+                el_select.appendChild(el_option);
+            }
+
+            if (elid == "strokeWeightSel") {
+                //给select标签添加事件
+                google.maps.event.addDomListener(el_select, 'change', function () {
+                    polyOptions.strokeWeight = this.value;
+                });
+            }
+
+            controlDiv.appendChild(el_select);
+        }
+
+        var strokeWeightDiv = document.createElement('div');
+        strokeWeightDiv.id = "strokeWeightDiv";
+        strokeWeightDiv.title = "边框粗细";
+        strokeWeightDiv.style.margin = "5px";
+        strokeWeightControl1 = new StrokeWeightControl(strokeWeightDiv, map, "strokeWeightSel", [1, 2, 3, 4, 5, 8, 10, 15, 20, 40], null);
+        map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(strokeWeightDiv);
+
+
+        google.maps.event.addDomListener(map.getDiv(), 'mousedown', function (e) {
+            //do it with the right mouse-button only
+            if (e.button != 2) {
+                return false;
+            }
+            //the polygon
+            //if(!poly){
+            var poly = new google.maps.Polyline(polyOptions);//{map:map,clickable:false}
+            poly.setMap(map);
+            //}
+            //move-listener
+            var move = google.maps.event.addListener(map, 'mousemove', function (e) {
+                poly.getPath().push(e.latLng);
+            });
+            //mouseup-listener
+            google.maps.event.addListenerOnce(map, 'mouseup', function (e) {//addListenerOnce
+                google.maps.event.removeListener(move);
+            });
+
+        });
+
+    }
+
+    document.addEventListener('DOMContentLoaded',init,false);
+</script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>田家园后台</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/jqPagination/css/jqpagination.css">
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+</head>
+<body style="background-color: #fff">
+<div class="container">
+    <h1>田家园坐标修改</h1>
+
+    <p>先通过唯一标识点查询找到记录（iMedAA0112），再修改</p>
+
+    <div class="row">
+        <div class="form-inline">
+            <div class="form-group">
+                <label for="issue">唯一标识</label>
+                <input type="text" class="form-control" id="issue">
+            </div>
+            <button id="submit" class="btn btn-primary">查询</button>
+        </div>
+    </div>
+    <br/>
+
+    <div class="row">
+        <div class="form-inline">
+            <div class="form-group">
+                <label>Id</label>
+                <input title="" type="text" class="form-control" readonly id="id"/>
+            </div>
+            <div class="form-group">
+                <label>名称</label>
+                <input title="" type="text" class="form-control" id="title"/>
+            </div>
+            <br/><br/>
+
+            <div class="form-group">
+                <label>x1</label><input title="" type="text" class="form-control" id="x1"/>
+            </div>
+            <div class="form-group">
+                <label>y1</label><input title="" type="text" class="form-control" id="y1"/>
+            </div>
+            <div class="form-group">
+                <label>x2</label><input title="" type="text" class="form-control" id="x2"/>
+            </div>
+            <div class="form-group">
+                <label>y2</label><input title="" type="text" class="form-control" id="y2"/>
+            </div>
+
+
+            <button id="update" class="btn btn-primary">更新</button>
+            <button id="delete" class="btn btn-primary">删除</button>
+        </div>
+    </div>
+    <br/>
+
+    <h1>田家园坐标新增</h1>
+
+    <div class="row">
+        <div class="form-inline">
+            <div class="form-group">
+                <label>x1</label><input title="" type="text" class="form-control" id="x12"/>
+            </div>
+            <div class="form-group">
+                <label>y1</label><input title="" type="text" class="form-control" id="y12"/>
+            </div>
+            <div class="form-group">
+                <label>x2</label><input title="" type="text" class="form-control" id="x22"/>
+            </div>
+            <div class="form-group">
+                <label>y2</label><input title="" type="text" class="form-control" id="y22"/>
+            </div>
+            <br/><br/>
+
+            <div class="form-group">
+                <label>名称</label><input title="" type="text" class="form-control" id="title2"/>
+            </div>
+            <div class="form-group">
+                <label>唯一标识 </label><input title="" type="text" class="form-control" id="issue2"/>
+            </div>
+            <button id="add" class="btn btn-primary">保存</button>
+        </div>
+    </div>
+    <h1>课程查询</h1>
+
+    <div class="row">
+        <div class="form-inline">
+            <div class="form-group">
+                <label for="tl">课程名</label>
+                <input class="form-control" type="text" title="" id="tl">
+                <button id="search" class="btn btn-primary">查询</button>
+            </div>
+            </div>
+        <br />
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>课程名</td>
+                    <td>课程ID</td>
+                    <td>唯一标识</td>
+                </tr>
+                </thead>
+                <tbody id="tbody">
+
+                </tbody>
+            </table>
+            <div class="pagination" id="listp">
+                <a href="#" class="first" data-action="first">&laquo;</a>
+                <a href="#" class="previous" data-action="previous">&lsaquo;</a>
+                <input title="" type="text" readonly="readonly"/>
+                <a href="#" class="next" data-action="next">&rsaquo;</a>
+                <a href="#" class="last" data-action="last">&raquo;</a>
+            </div>
+    </div>
+    <h1>田家园生成</h1>
+    <div class="row">
+        <div class="form-inline">
+            <label for="zoom">第几层</label>
+            <input type="text" title="" class="form-control" id="zoom">
+            <label for="aid">课程ID</label>
+            <input type="text" title="" class="form-control" id="aid">
+            <button id="save" class="btn btn-primary">在线生成田家园</button>
+        </div>
+    </div>
+</div>
+<script src="./bower_components/artTemplate/dist/template.js"></script>
+<script src="./bower_components/jqPagination/js/jquery.jqpagination.min.js"></script>
+<script id="listTemplate" type="text/html">
+    {{each list}}
+    <tr>
+        <td>{{$value.title}}</td>
+        <td>{{$value.aid}}</td>
+        <td>{{$value.issue}}</td>
+    </tr>
+    {{/each}}
+</script>
+<script type="text/javascript">
+    //像素X到经度
+
+    function pixelToLng(pixelX, zoom) {
+        return pixelX * 360 / (256 << zoom) - 180;
+    }
+
+    //像素Y到纬度
+
+    function pixelToLat(pixelY, zoom) {
+        var y = 2 * Math.PI * (1 - pixelY / (128 << zoom));
+
+        var z = Math.pow(Math.E, y);
+
+        var siny = (z - 1) / (z + 1);
+
+        return Math.sin(siny) * 180 / Math.PI;
+    }
+
+    function Polygon(x1, y1, x2, y2, zoom) {
+        var p0 = pixelToLat(y1, zoom);
+        var p1 = pixelToLat(y2, zoom);
+        var p2 = pixelToLng(x2, zoom);
+        var p3 = pixelToLng(x1, zoom);
+        return "POLYGON((" + p0 + ' ' + p1 + ',' + p0 + ' ' + p3 + ',' + p2 + ' ' + p3 + ',' + p2 + ' ' + p1 + ',' + p0 + ' ' + p1 + "))";
+    }
+    $(document).ready(function () {
+        var limit = 9;
+        getList(limit, 1);
+        $('#listp').jqPagination({
+            max_page: Math.ceil(getCount() / limit),
+            page_string: '第{current_page}页,共{max_page}页',
+            paged: function (page) {
+                getList(limit, page);
+            }
+        });
+        function getCount() {
+            var count = 0;
+            $.ajax({
+                url: 'http://121.41.92.56:8000/Area/Info/',
+                data: {
+                    zoom: 6,
+                    title: $('#tl').val()
+                },
+                async: false,
+                success: function (data) {
+                    if (data != null && typeof data.info.Count === 'number') {
+                        count = data.info.Count;
+                    }
+                }
+            });
+            return count;
+        }
+
+        function getList(limit, offset) {
+            $.ajax({
+                url: 'http://121.41.92.56:8000//Area/List/',
+                data: {
+                    offset: offset,
+                    limit: limit,
+                    zoom: 6,
+                    title: $('#tl').val()
+                },
+                success: function (data) {
+                    if (data != null && data.code == 0) {
+                        var html = template('listTemplate', data);
+                        $('#tbody').empty().append(html);
+                    }
+                }
+            });
+        }
+
+        $('#search').on('click', function () {
+            $('#listp').jqPagination({
+                max_page: Math.ceil(getCount() / limit),
+                page_string: '第{current_page}页,共{max_page}页'
+            });
+            getList(limit, 1);
+        });
+        $('#submit').on('click', function () {
+            $.ajax({
+                url: 'http://121.41.92.56:8000/Area/Get/',
+                data: {"issue": $('#issue').val()},
+                //async: false,
+                success: function (data) {
+                    if (data == null || data.get.length == 0) {
+                        alert('查询不到！');
+                        return;
+                    }
+                    $('#id').val(data.get.aid);
+                    $('#title').val(data.get.title);
+                    $('#x1').val(data.get.x1);
+                    $('#y1').val(data.get.y1);
+                    $('#x2').val(data.get.x2);
+                    $('#y2').val(data.get.y2);
+                }
+            });
+        });
+        $('#delete').on('click', function () {
+            var id = $('#id').val();
+            if (id == undefined || id == "") {
+                alert("请先查询");
+            }
+            $.ajax({
+                url: 'http://121.41.92.56:8000//Area/Del/',
+                data: {
+                    aid: id
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        alert("删除成功！");
+                    } else {
+                        alert("删除失败！");
+                    }
+                }
+            })
+        })
+        $('#save').on('click', function () {
+            var zoom=$('#zoom');
+            var aid=$('#aid');
+            if(zoom.val()==''){
+                alert('请输入要生成的层数');
+                zoom.focus();
+            }
+            if(zoom.val()>=10&&aid.val()==''){
+                alert('层数大于9，请输入课程ID');
+                aid.focus();
+                return false;
+            }
+            $.get('http://121.41.92.56:8001/FieldHome',{
+                zoom:zoom.val(),
+                aid:aid.val()
+            }, function (data) {
+                alert(data.msg);
+            });
+        })
+        $('#add').on('click', function () {
+            if ($('#x12').val() == "" || $('#y12').val() == "" || $('#x22').val() == ""
+                    || $('#y22').val() == "" || $('#title2').val() == "" || $('#issue2').val() == "") {
+                alert('参数不能为空!');
+            }
+            var ll2 = Polygon($('#x12').val(), $('#y12').val(), $('#x22').val(), $('#y22').val(), 4);
+            $.ajax({
+                url: 'http://121.41.92.56:8000//Area/Add/',
+                data: {
+                    "x1": $('#x12').val(),
+                    "y1": $('#y12').val(),
+                    "x2": $('#x22').val(),
+                    "y2": $('#y22').val(),
+                    "title": $('#title2').val(),
+                    "polygon": ll2,
+                    "mid": 1,
+                    "issue": $('#issue2').val(),
+                    "state": 2
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        alert("新增成功！");
+                    } else {
+                        alert("新增失败！");
+                    }
+                }
+            })
+        })
+        $('#update').on('click', function () {
+            // var xyArray = $('#xy').val().split(',');
+            if ($('#x1').val() == "" || $('#y1').val() == "" || $('#x2').val() == "" || $('#y2').val() == "" || $('#title').val() == "") {
+                alert('参数不能为空!');
+            }
+            var ll = Polygon($('#x1').val(), $('#y1').val(), $('#x2').val(), $('#y2').val(), 4);
+
+            $.ajax({
+                url: 'http://121.41.92.56:8000/Area/Put/',
+                data: {
+                    "aid": $('#id').val(),
+                    "x1": $('#x1').val(),
+                    "y1": $('#y1').val(),
+                    "x2": $('#x2').val(),
+                    "y2": $('#y2').val(),
+                    "title": $('#title').val(),
+                    "polygon": ll
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        alert("更新成功！");
+                    } else {
+                        alert("更新失败！");
+                    }
+                }
+            });
+        });
+    })
+</script>
+</body>
+</html>

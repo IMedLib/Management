@@ -31,13 +31,13 @@ var app=app||{};
     //像素X到经度
 
     app.utils.pixelToLng=function(pixelX, zoom) {
-        return pixelX * 360 / (parseFloat(256) << zoom) - 180;
+        return pixelX * 360 / (256 << zoom) - 180;
     };
 
     //像素Y到纬度
 
     app.utils.pixelToLat=function(pixelY, zoom) {
-        var y = 2 * Math.PI * (1 - pixelY / (parseFloat(128) << zoom));
+        var y = 2 * Math.PI * (1 - pixelY / (128 << zoom));
 
         var z = Math.pow(Math.E, y);
 
@@ -47,14 +47,14 @@ var app=app||{};
     };
 	//纬度到像素y
 	app.utils.latToPixel=function(lat,zoom){
-		var siny = Math.sin(lat*Math.PI/180);
+		var siny = Math.sin(lat*Math.PI/Number(180));
         var y = Math.log((1 + siny)/(1 - siny));
-        return (128 << zoom)*(1 - y/(2*Math.PI));
+        return (Number(128) << zoom)*(1 - y/(2*Math.PI));
 	};
 	//经度到像素x
 	app.utils.lngToPixel=function(lng,zoom){
 
-		return (lng + 180)*(parseFloat(256) << zoom)/360;
+		return (lng + 180)*(Number(256) << zoom)/360;
 	};
 	/* cookie **********************************************/
 	app.cookie=app.cookie||{};

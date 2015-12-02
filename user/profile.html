@@ -160,12 +160,32 @@
         }
         function getUserInfo(){
             var userid=app.cookie.get('userid');
+            var token = app.cookie.get('token');
+            if(userid==null||token==null){
+                window.location.href='../login.html';
+            }
             app.user.getUserInfo({
-                data:{uid:userid},
+                data:{
+                    uid:userid,
+                    key:userid,
+                    token:token
+                },
                 success:function(data){
-                    if(data==""||data.code!=0) return false;
+                    if(data!="") {
+                        if(typeof data.href!='undefined'&&data.href!=""){
+                            window.location.href=data.href;
+                        }
+                        if(data.code!=0)
+                        {
+                            app.message.error(data.msg);
+                            return false;
+                        }
+                    }
                     $('#nickname').text(data.get.nname);
                     $('#username').text(data.get.uname);
+                },
+                error:function(){
+                    app.message.error('网络超时，请稍后再试！');
                 }
             });
             

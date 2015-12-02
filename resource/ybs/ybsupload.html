@@ -200,14 +200,25 @@
         function getUserInfo() {
             userid = app.cookie.get('userid');
             token = app.cookie.get('token');
-            if (userid == '' || token == '') {
-                window.location.href = "../../login.html";
-            }
+
             app.user.getUserInfo({
-                data: {uid: userid},
+                data: {
+                    uid: userid,
+                    key: userid,
+                    token: token
+                },
+
                 success: function (data) {
-                    if (data == "") return false;
+                    if (data != "" && data.code != 0) {
+                        if (typeof data.href != 'undefined' && data.href != '') {
+                            window.location.href = data.href;
+                        }
+                        return false;
+                    }
                     $('#username').text(data.get.uname);
+                },
+                error: function () {
+                    app.message.error('网络延时，请稍后再试！');
                 }
             });
         }
@@ -219,9 +230,11 @@
             app.ui.setBusy('#form');
             var file = document.getElementById('uploadfile');
             var formData = new FormData();
-            formData.append('file', $('#uploadfile')[0].files[0]);
+            formData.append('uploadfile', file[0].files[0]);
             title = document.getElementById('title').value;
             formData.append('title', title);
+            formData.append('key',key);
+            formData.append('token',token);
             $.ajax({
                 url: app.config.upload + 'YunBook',
                 type: 'POST',
@@ -230,7 +243,15 @@
                 processData: false,
                 data: formData
             }).done(function (data) {
-                addYunBook(data);
+                if(data.code!=0){
+                    if(data.href!=''){
+                        window.location.href=data.href;
+                    }else{
+                        app.message.error(data.msg==''?'上传失败，请稍后再试！':data.msg);
+                    }
+                }else{
+                    addYunBook(data);
+                }
             }).error(function () {
                 app.message.error('上传失败，请稍后重新再试！');
             }).always(function () {

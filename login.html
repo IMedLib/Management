@@ -56,13 +56,6 @@
     <script type="text/javascript" src="js/app-sweetalert.js"></script>
 
     <script type="text/javascript">
-        checkLogin();
-        function checkLogin(){
-            if(typeof app.cookie.get('userid')== "number")
-            {
-                window.location.href="user/profile.html";
-            }
-        }
         var wait=app.config.wait;
         jQuery(document).ready(function($) {
             var form=$('#form');
@@ -106,15 +99,12 @@
                         vcode:yzm.value
                     },
                     success:function(result){
-                        if(result.code==1)
-                        {
-                            app.message.error(result.msg);
-                        }else if(result.code==2){
-                            app.message.error('注册出错，请重新尝试！');
-                        }else{
+                        if(typeof result =='object' && result.code==0){
                             app.cookie.set('userid',result.uid,7);
                             app.cookie.set('token',result.token,7);
                             window.location.href="user/profile.html";
+                        }else{
+                            app.message.error(result.msg);
                         }
                     }
                 });

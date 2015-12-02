@@ -219,4 +219,4 @@ var BlitzMap =new function(){
         return result;
     }
     
-}
+};
